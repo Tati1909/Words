@@ -15,7 +15,6 @@
  */
 package com.example.wordsapp
 
-import android.content.Intent
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -23,6 +22,7 @@ import android.view.ViewGroup
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Button
 import androidx.annotation.RequiresApi
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 
 /**
@@ -38,7 +38,7 @@ class LetterAdapter :
      * Provides a reference for the views needed to display items in your list.
      */
     class LetterViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val button = view.findViewById<Button>(R.id.button_item)
+        val buttonItem = view.findViewById<Button>(R.id.button_item)
     }
 
     override fun getItemCount(): Int {
@@ -53,7 +53,7 @@ class LetterAdapter :
                 .from(parent.context)
                 .inflate(R.layout.item_view, parent, false)
         // Setup custom accessibility delegate to set the text read
-        layout.accessibilityDelegate = Accessibility
+        layout.accessibilityDelegate = WordAdapter
         return LetterViewHolder(layout)
     }
 
@@ -61,12 +61,20 @@ class LetterAdapter :
     Заменяет содержимое существующей View новыми данными     */
     override fun onBindViewHolder(holder: LetterViewHolder, position: Int) {
         val item = list.get(position)
-        holder.button.text = item.toString()
-        holder.button.setOnClickListener {
+        holder.buttonItem.text = item.toString()
+        holder.buttonItem.setOnClickListener {
+            //LetterListFragmentDirections позволяет ссылаться на все возможные пути навигации,
+            // начиная с letterListFragment
+            //Функция actionLetterListFragmentToWordListFragment() -
+            //это конкретное действие для перехода к wordListFragment
+            val action = LetterListFragmentDirections.actionLetterListFragmentToWordListFragment(
+                letter = holder.buttonItem.text.toString())
+            holder.view.findNavController().navigate(action)
+            /*
             val context = holder.view.context
-            val intent = Intent(context, DetailActivity::class.java)
+            val intent = Intent(context, WordListFragment::class.java)
             intent.putExtra(WordListFragment.LETTER, holder.button.text.toString())
-            context.startActivity(intent)
+            context.startActivity(intent) */
         }
     }
 
