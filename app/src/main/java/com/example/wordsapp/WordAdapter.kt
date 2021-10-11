@@ -28,7 +28,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 
 /**
- * Adapter for the [RecyclerView] in [DetailActivity].
+ * Адаптер для [RecyclerView] в [DetailActivity].
  */
 class WordAdapter(private val letterId: String, context: Context) :
     RecyclerView.Adapter<WordAdapter.WordViewHolder>() {
@@ -36,13 +36,13 @@ class WordAdapter(private val letterId: String, context: Context) :
     private val filteredWords: List<String>
 
     init {
-        // Retrieve the list of words from res/values/arrays.xml
+        //Получаем список слов из res / values / arrays.xml
         val words = context.resources.getStringArray(R.array.words).toList()
 
         filteredWords = words
-            // Returns items in a collection if the conditional clause is true,
-            // in this case if an item starts with the given letter,
-            // ignoring UPPERCASE or lowercase.
+            // Возвращает элементы в коллекции, если условное предложение истинно,
+            // в этом случае, если элемент начинается с данной буквы,
+            // игнорирование ВЕРХНИХ или строчных букв
             .filter { it.startsWith(letterId, ignoreCase = true) }
             // Returns a collection that it has shuffled in place
             .shuffled()
@@ -53,13 +53,13 @@ class WordAdapter(private val letterId: String, context: Context) :
     }
 
     class WordViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val button = view.findViewById<Button>(R.id.button_item)
+        val button = view.findViewById<Button>(R.id.list_item)
     }
 
     override fun getItemCount(): Int = filteredWords.size
 
     /**
-     * Creates new views with R.layout.item_view as its template
+     * Создает новые view с R.layout.item_view в качестве шаблона
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordViewHolder {
         val layout = LayoutInflater
@@ -73,7 +73,7 @@ class WordAdapter(private val letterId: String, context: Context) :
     }
 
     /**
-     * Replaces the content of an existing view with new data
+     * Заменяет содержимое существующего view новыми данными
      */
     override fun onBindViewHolder(holder: WordViewHolder, position: Int) {
 
@@ -83,7 +83,15 @@ class WordAdapter(private val letterId: String, context: Context) :
 
         // Устанавливаем текст WordViewHolder
         holder.button.text = item
-        //устанавливаем слушатель и интент
+        //устанавливаем слушатель и интент(выходим в интернет)
+        //ACTION_VIEW- это общее намерение, которое принимает URI, в вашем случае веб-адрес.
+        //Затем система знает, как обработать это намерение, открыв URI в веб-браузере пользователя.
+        // Некоторые другие типы намерений включают:
+        //CATEGORY_APP_MAPS - запуск приложения карт
+        //CATEGORY_APP_EMAIL - запуск почтового приложения
+        //CATEGORY_APP_GALLERY - запуск приложения "Галерея (фото)"
+        //ACTION_SET_ALARM - установка будильника в фоновом режиме
+        //ACTION_DIAL - совершение телефонного звонка
         holder.button.setOnClickListener {
             val queryUrl: Uri = Uri.parse("${WordListFragment.SEARCH_PREFIX}${item}")
             val intent = Intent(Intent.ACTION_VIEW, queryUrl)
@@ -91,8 +99,8 @@ class WordAdapter(private val letterId: String, context: Context) :
         }
     }
 
-    // Setup custom accessibility delegate to set the text read with
-    // an accessibility service
+    // Настройте AccessibilityDelegate(), чтобы установить текст,
+    // читаемый с помощью службы Accessibility (доступности)
     companion object Accessibility : View.AccessibilityDelegate() {
         @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
         override fun onInitializeAccessibilityNodeInfo(
@@ -100,10 +108,10 @@ class WordAdapter(private val letterId: String, context: Context) :
             info: AccessibilityNodeInfo?
         ) {
             super.onInitializeAccessibilityNodeInfo(host, info)
-            // With `null` as the second argument to [AccessibilityAction], the
-            // accessibility service announces "double tap to activate".
-            // If a custom string is provided,
-            // it announces "double tap to <custom string>".
+            // Если вторым аргументом [AccessibilityAction] будет `null`,
+            // служба доступности объявляет «двойное касание для активации».
+            // Если указана настраиваемая строка,
+            // он объявляет «двойное нажатие на <настраиваемую строку>».
             val customString = host?.context?.getString(R.string.look_up_word)
             val customClick =
                 AccessibilityNodeInfo.AccessibilityAction(

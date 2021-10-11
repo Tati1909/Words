@@ -31,37 +31,43 @@ import androidx.recyclerview.widget.RecyclerView
 class LetterAdapter :
     RecyclerView.Adapter<LetterAdapter.LetterViewHolder>() {
 
-    // Generates a [CharRange] from 'A' to 'Z' and converts it to a list
-    private val list = ('A').rangeTo('Z').toList()
+    // Создаем список от «A» до «Z» и преобразует его в список
+    private val dataSetList = ('A').rangeTo('Z').toList()
 
     /**
-     * Provides a reference for the views needed to display items in your list.
+     * Предоставляет ссылку на представления, необходимые для отображения элементов в вашем списке.
      */
     class LetterViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val buttonItem = view.findViewById<Button>(R.id.button_item)
-    }
-
-    override fun getItemCount(): Int {
-        return list.size
+        val buttonItem:Button = view.findViewById(R.id.list_item)
     }
 
     /**
-     * Creates new views with R.layout.item_view as its template
+     * Создает новые ViewHolders с R.layout.item_view в качестве шаблона
+    //ViewHolder хранит ссылки на каждый элемент списка
+    // (как в заметках мы искали заметки по Id)
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LetterViewHolder {
-        val layout = LayoutInflater
-                .from(parent.context)
+        val adapterLayout = LayoutInflater.from(parent.context)
                 .inflate(R.layout.item_view, parent, false)
-        // Setup custom accessibility delegate to set the text read
-        layout.accessibilityDelegate = WordAdapter
-        return LetterViewHolder(layout)
+        // !НЕОБЯЗАТЕЛЬНО   Настройте accessibilityDelegate, чтобы настроить чтение текста
+        adapterLayout.accessibilityDelegate = WordAdapter
+        return LetterViewHolder(adapterLayout)
+    }
+
+    //получение количества элементов
+    override fun getItemCount(): Int {
+        return dataSetList.size
     }
 
     /**
     Заменяет содержимое существующей View новыми данными     */
     override fun onBindViewHolder(holder: LetterViewHolder, position: Int) {
-        val item = list.get(position)
-        holder.buttonItem.text = item.toString()
+        //элемент RecyclerView = позиция списка наших данных
+        val recyclerViewItem = dataSetList[position]
+
+        //обновляем холдер для отображения нашей буквы
+        holder.buttonItem.text = recyclerViewItem.toString()
+        //устанавливаем слушатель
         holder.buttonItem.setOnClickListener {
             //LetterListFragmentDirections позволяет ссылаться на все возможные пути навигации,
             // начиная с letterListFragment
@@ -78,8 +84,8 @@ class LetterAdapter :
         }
     }
 
-    // Setup custom accessibility delegate to set the text read with
-    // an accessibility service
+    // Настройте AccessibilityDelegate(), чтобы установить текст,
+    // читаемый с помощью службы Accessibility (доступности)
     companion object Accessibility : View.AccessibilityDelegate() {
         @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
         override fun onInitializeAccessibilityNodeInfo(
@@ -87,10 +93,10 @@ class LetterAdapter :
             info: AccessibilityNodeInfo?
         ) {
             super.onInitializeAccessibilityNodeInfo(host, info)
-            // With `null` as the second argument to [AccessibilityAction], the
-            // accessibility service announces "double tap to activate".
-            // If a custom string is provided,
-            // it announces "double tap to <custom string>".
+            // Если вторым аргументом [AccessibilityAction] будет `null`,
+            // служба доступности объявляет «двойное касание для активации».
+            // Если указана настраиваемая строка,
+            // он объявляет «двойное нажатие на <настраиваемую строку>».
             val customString = host?.context?.getString(R.string.look_up_words)
             val customClick =
                 AccessibilityNodeInfo.AccessibilityAction(

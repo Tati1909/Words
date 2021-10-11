@@ -10,10 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.wordsapp.databinding.FragmentLetterListBinding
 
 class LetterListFragment : Fragment() {
+
     private var _binding: FragmentLetterListBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var recyclerView: RecyclerView
-    //флажок: буквы в линейной компановке(по умолчанию)
+
+    //флажок разметки кнопок: буквы в линейной компановке(по умолчанию)
     private var isLinearLayoutManager = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,29 +45,33 @@ class LetterListFragment : Fragment() {
         _binding = null
     }
 
+    //Чтобы ваше приложение действительно могло использовать меню, вам нужно переопределить еще два метода:
+    //onCreateOptionsMenu: где вы расширяете меню опций и выполняете любые дополнительные настройки
+    //onOptionsItemSelected: когда вы  будете  вызывать chooseLayout(), если кнопка будет нажата.
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.layout_menu, menu)
 
-        val layoutButton = menu.findItem(R.id.action_switch_layout)
-        setIcon(layoutButton)
+        val layoutIcon = menu.findItem(R.id.menu_switch_icon)
+        setIcon(layoutIcon)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_switch_layout -> {
-                // Sets isLinearLayoutManager (a Boolean) to the opposite value
+            //Если пользователь нажал на иконку переключателя меню(список-сетка), то ->
+            R.id.menu_switch_icon -> {
+                // Устанавливаем isLinearLayoutManager (логическое значение) на противоположное значение
                 isLinearLayoutManager = !isLinearLayoutManager
-                // Sets layout and icon
+                // Меняем макет и иконку
                 chooseLayout()
                 setIcon(item)
 
                 return true
             }
-            //  Otherwise, do nothing and use the core event handling
-
-            // when clauses require that all possible paths be accounted for explicitly,
-            //  for instance both the true and false cases if the value is a Boolean,
-            //  or an else to catch all unhandled cases.
+            //  // В противном случае ничего не делать и использовать базовую обработку событий
+            //
+            // когда предложения требуют, чтобы все возможные пути были явно учтены,
+            // например, как истинный, так и ложный случай, если значение является логическим,
+            // или другое, чтобы поймать все необработанные случаи.
             else -> super.onOptionsItemSelected(item)
         }
     }

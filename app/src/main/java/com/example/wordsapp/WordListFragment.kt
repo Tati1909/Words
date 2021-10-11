@@ -11,8 +11,11 @@ import com.example.wordsapp.databinding.FragmentWordListBinding
 
 class WordListFragment : Fragment() {
 
+    //companion object похож на другие объекты, например экземпляры класса. Однако только один экземпляр companion object
+    //будет существовать на протяжении всей вашей программы, поэтому его иногда называют  singleton pattern .
     companion object {
         const val LETTER = "letter"
+        //базовый URL для поиска Google
         val SEARCH_PREFIX = "https://www.google.com/search?q="
     }
 
@@ -23,6 +26,8 @@ class WordListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //достаем из Bundle наш ключ-букву
+        //прикрутим букву к нашему адаптеру в методе onViewCreated
         arguments?.let {
             letterId = it.getString(LETTER).toString()
         }
