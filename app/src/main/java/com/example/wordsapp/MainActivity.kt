@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         //получим ссылку на nav_host_fragment(это FragmentContainerView из activity_main.xml)
         // и назначим ее своей navController собственностью
         val navHostFragment = supportFragmentManager
@@ -43,7 +44,8 @@ class MainActivity : AppCompatActivity() {
         // такие как пункт меню, LetterListFragment будут видны.
         setupActionBarWithNavController(navController)
     }
-
+    //OnSupportNavigateUp  необходимо переопределить в действии хоста, чтобы гарантировать,
+    // что навигация вашего приложения на основе фрагментов реагирует на кнопку «Вверх» приложения.
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
